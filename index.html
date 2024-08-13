@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Báo Nợ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 794px;
+            height: 1123px;
+            position: relative;
+            background-image: url('https://i.imgur.com/SXrdkLp.png'); /* Đặt hình ảnh từ Imgur ở đây */
+            background-size: cover;
+            background-position: center;
+        }
+        .input-field {
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+            font-style: italic;
+        }
+        .input-field input {
+            border: none;
+            background: transparent;
+            font-size: inherit;
+            font-weight: inherit;
+            font-style: inherit;
+            text-align: left;
+        }
+        /* Định vị các trường dữ liệu */
+        #customer-name { top: 145px; left: 150px; width: 400px; }
+        #account-no { top: 175px; left: 150px; width: 200px; }
+        #tax-code { top: 205px; left: 150px; width: 200px; }
+        #transaction-id { top: 205px; left: 550px; width: 200px; }
+        #amount-in-words { top: 465px; left: 300px; width: 400px; }
+        #total-amount { top: 295px; left: 550px; width: 200px; }
+
+        .form-container {
+            margin-top: 30px;
+            text-align: center;
+        }
+        .form-container input[type="text"] {
+            margin-bottom: 10px;
+            padding: 5px;
+            width: 300px;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Các trường nhập dữ liệu -->
+        <div class="input-field" id="customer-name"><input type="text" placeholder="Nhập tên khách hàng..."></div>
+        <div class="input-field" id="account-no"><input type="text" placeholder="Nhập số tài khoản..."></div>
+        <div class="input-field" id="tax-code"><input type="text" placeholder="Nhập MST KH..."></div>
+        <div class="input-field" id="transaction-id"><input type="text" placeholder="Nhập mã GD..."></div>
+        <div class="input-field" id="amount-in-words"><input type="text" placeholder="Nhập số tiền bằng chữ..."></div>
+        <div class="input-field" id="total-amount"><input type="text" placeholder="Nhập số tiền..."></div>
+    </div>
+
+    <div class="form-container">
+        <h3>Nhập dữ liệu vào phiếu báo nợ</h3>
+        <input type="text" id="input-customer-name" placeholder="Tên khách hàng">
+        <input type="text" id="input-account-no" placeholder="Số tài khoản">
+        <input type="text" id="input-tax-code" placeholder="MST KH">
+        <input type="text" id="input-transaction-id" placeholder="Mã GD">
+        <input type="text" id="input-amount-in-words" placeholder="Số tiền bằng chữ">
+        <input type="text" id="input-total-amount" placeholder="Số tiền">
+        <button onclick="updateForm()">Cập nhật phiếu</button>
+        <button onclick="getGoogleSheetData()">Lấy dữ liệu từ Google Sheet</button>
+    </div>
+
+    <script>
+        function updateForm() {
+            document.getElementById('customer-name').querySelector('input').value = document.getElementById('input-customer-name').value;
+            document.getElementById('account-no').querySelector('input').value = document.getElementById('input-account-no').value;
+            document.getElementById('tax-code').querySelector('input').value = document.getElementById('input-tax-code').value;
+            document.getElementById('transaction-id').querySelector('input').value = document.getElementById('input-transaction-id').value;
+            document.getElementById('amount-in-words').querySelector('input').value = document.getElementById('input-amount-in-words').value;
+            document.getElementById('total-amount').querySelector('input').value = document.getElementById('input-total-amount').value;
+        }
+
+        function getGoogleSheetData() {
+            const sheetId = 'ID_BANG_GOOGLE_SHEET'; // Thay thế bằng ID của bảng Google Sheet của bạn
+            const range = 'Sheet1!A2:F2'; // Chỉ định dải dữ liệu bạn muốn lấy (ví dụ: hàng 2)
+            fetch(`https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=API_KEY`)
+                .then(response => response.json())
+                .then(data => {
+                    const values = data.values[0];
+                    document.getElementById('input-customer-name').value = values[0];
+                    document.getElementById('input-account-no').value = values[1];
+                    document.getElementById('input-tax-code').value = values[2];
+                    document.getElementById('input-transaction-id').value = values[3];
+                    document.getElementById('input-amount-in-words').value = values[4];
+                    document.getElementById('input-total-amount').value = values[5];
+                    updateForm();
+                })
+                .catch(error => console.error('Lỗi khi lấy dữ liệu từ Google Sheets:', error));
+        }
+    </script>
+</body>
+</html>
